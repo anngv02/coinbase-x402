@@ -14,11 +14,19 @@ const app = express();
 // Use Base Sepolia (testnet) for development
 const network = "base-sepolia";
 const facilitatorObj = { url: "https://x402.org/facilitator" };
-const walletAddress = process.env.WALLET_ADDRESS;
+// Use WALLET_ADDRESS from env if available, otherwise use default address
+const walletAddress = process.env.WALLET_ADDRESS || "0x60e7daf8b14fe9eb379837ea13522ef7dac6e233";
 const price = "$0.10";
 
 // Log payment information on startup
 logPaymentInfo(walletAddress, network);
+
+// Log which address is being used
+if (process.env.WALLET_ADDRESS) {
+  log("Using WALLET_ADDRESS from environment variables", "info");
+} else {
+  log("Using default wallet address (WALLET_ADDRESS not set in environment)", "info");
+}
 
 // Serve static files from the public directory
 app.use(express.static(path.join(process.cwd(), "public")));
@@ -26,13 +34,14 @@ app.use(express.static(path.join(process.cwd(), "public")));
 app.use(express.json());
 
 // x402 payment middleware configuration
+// walletAddress is always set (either from env or default)
 app.use(
   paymentMiddleware(
     walletAddress, // your receiving wallet address
     {
       // Protected endpoint for authentication
       "GET /authenticate": {
-        price: price, // Set your desired price
+        price: price, // Fixed price: $0.10
         network: network,
       },
     },
@@ -58,7 +67,9 @@ app.use((req, res, next) => {
 });
 
 // Authentication endpoint - just redirects to the authenticated content
+// Note: This only runs after payment middleware verifies payment successfully
 app.get("/authenticate", (req, res) => {
+  // This endpoint is only reached after successful payment verification by middleware
   log("✅ Payment successful, redirecting to video content");
   log(`💰 Tiền đã được gửi đến: ${walletAddress}`);
   log(`🔍 Xem transaction trên: ${getExplorerUrl(walletAddress, network)}`);
@@ -73,9 +84,10 @@ app.get("/api/payment-info", (req, res) => {
   res.json({
     walletAddress: walletAddress,
     network: network,
-    price: price,
+    price: price, // Fixed price: $0.10
     explorerUrl: getExplorerUrl(walletAddress, network),
     facilitatorUrl: facilitatorObj.url,
+    isDefaultAddress: !process.env.WALLET_ADDRESS, // Indicate if using default address
   });
 });
 
