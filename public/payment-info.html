@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Information - x402 Video Paywall</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .info-item {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #495057;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .info-value {
+      color: #212529;
+      word-break: break-all;
+      font-family: monospace;
+    }
+    .explorer-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+    .explorer-link:hover {
+      background: #0056b3;
+    }
+    .warning {
+      background: #fff3cd;
+      border-left-color: #ffc107;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💰 Thông Tin Thanh Toán</h1>
+    <p>Xem địa chỉ ví nhận thanh toán và theo dõi giao dịch</p>
+  </header>
+
+  <div class="info-card">
+    <h2>📍 Địa Chỉ Ví Nhận Thanh Toán</h2>
+    
+    <div class="info-item">
+      <span class="info-label">Địa chỉ ví:</span>
+      <span class="info-value" id="walletAddress">Đang tải...</span>
+      <button class="copy-btn" data-copy-target="walletAddress" style="margin-top: 0.5rem;">📋 Copy</button>
+    </div>
+
+    <div class="info-item">
+      <span class="info-label">Network:</span>
+      <span class="info-value" id="network">Đang tải...</span>
+    </div>
+
+    <div class="info-item">
+      <span class="info-label">Giá:</span>
+      <span class="info-value" id="price">Đang tải...</span>
+    </div>
+
+    <div class="info-item">
+      <span class="info-label">Facilitator:</span>
+      <span class="info-value" id="facilitatorUrl">Đang tải...</span>
+    </div>
+
+    <div class="info-item">
+      <span class="info-label">Blockchain Explorer:</span>
+      <a href="#" id="explorerLink" class="explorer-link" target="_blank">🔍 Xem trên BaseScan</a>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ Lưu ý:</strong> Tất cả các thanh toán sẽ được gửi trực tiếp đến địa chỉ ví trên. 
+      Bạn có thể theo dõi tất cả các giao dịch trên BaseScan bằng cách click vào link phía trên.
+    </div>
+  </div>
+
+  <div class="card" style="max-width: 800px; margin: 2rem auto;">
+    <h3>🔍 Cách Theo Dõi Giao Dịch</h3>
+    <ol>
+      <li>Click vào link "Xem trên BaseScan" phía trên</li>
+      <li>Trên BaseScan, bạn sẽ thấy:
+        <ul>
+          <li>Tất cả các giao dịch đến địa chỉ ví này</li>
+          <li>Số dư USDC hiện tại</li>
+          <li>Chi tiết từng transaction (sender, amount, timestamp)</li>
+        </ul>
+      </li>
+      <li>Để xem chi tiết một transaction cụ thể:
+        <ul>
+          <li>Click vào transaction hash</li>
+          <li>Xem thông tin: từ địa chỉ nào, số tiền, gas fee, timestamp</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card" style="max-width: 800px; margin: 2rem auto; text-align: center;">
+    <a href="/" class="cta-button">← Quay lại Trang Chủ</a>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Load payment info from API
+    async function loadPaymentInfo() {
+      try {
+        const response = await fetch('/api/payment-info');
+        const data = await response.json();
+        
+        document.getElementById('walletAddress').textContent = data.walletAddress || 'Chưa cấu hình';
+        document.getElementById('network').textContent = data.network || 'base-sepolia';
+        document.getElementById('price').textContent = data.price || '$0.10';
+        document.getElementById('facilitatorUrl').textContent = data.facilitatorUrl || 'N/A';
+        
+        if (data.explorerUrl) {
+          document.getElementById('explorerLink').href = data.explorerUrl;
+        }
+      } catch (error) {
+        console.error('Error loading payment info:', error);
+        document.getElementById('walletAddress').textContent = 'Lỗi khi tải thông tin';
+      }
+    }
+
+    // Load on page load
+    loadPaymentInfo();
+  </script>
+</body>
+</html>
+
