@@ -8,14 +8,14 @@ This project demonstrates how to implement a paywall for video content using the
 - Paywalled endpoint for accessing premium video content
 - Client-side implementation for making payments
 - Base Sepolia testnet integration for easy testing
-- **Payment tracking and monitoring** - View wallet address and transaction details
-- **Payment info web interface** - Access payment information via web UI
-- **CLI script for payment checking** - Quick command-line tool to check wallet address
-- **Detailed logging** - Track payment requests and successful transactions
+- View wallet address and transaction details
+- Access payment information via web UI
+- Quick command-line tool to check wallet address
+- Track payment requests and successful transactions
 
 ## Prerequisites
 
-- Node.js (v22 or higher)
+- Node.js (>v18)
 - A EVM-compatible wallet with Base Sepolia USDC
 - An Ethereum wallet address to receive payments (configured in `.env` file)
 
