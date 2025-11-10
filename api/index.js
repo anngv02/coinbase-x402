@@ -97,8 +97,12 @@ app.use((req, res) => {
 // Export the app for Vercel serverless functions
 export default app;
 
-// Start the server for local development
-const PORT = process.env.PORT || 4021;
-app.listen(PORT, () => {
-  log(`Server is running on http://localhost:${PORT}`);
-});
+// Start the server for local development only
+// Vercel serverless functions don't need app.listen() - they automatically invoke the exported handler
+// Check if we're running locally (not in Vercel's serverless environment)
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 4021;
+  app.listen(PORT, () => {
+    log(`Server is running on http://localhost:${PORT}`);
+  });
+}
